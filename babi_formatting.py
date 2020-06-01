@@ -66,3 +66,34 @@ def parse_stories(lines, only_supporting=False):
             sentence = tokenize_char(line)
             story.append(sentence)
     return stories
+
+
+def truncate_stories(stories, max_length):
+    stories_truncated = []
+    for story, query, answer in stories:
+        story_truncated = story[-max_length:]
+        stories_truncated.append((story_truncated, query, answer))
+    return stories_truncated
+
+def get_tokenizer(stories):
+    """
+    Recover unique tokens as a vocab and map the tokens to ids.
+    """
+    tokens_all = []
+    for story, query, answer in stories:
+        tokens_all.extend([token for sentence in story for token in sentence] + query + [answer])
+    vocab = [PAD_TOKEN] + sorted(set(tokens_all))
+    token_to_id = {token: i for i, token in enumerate(vocab)}
+    return token_to_id
+
+def tokenize_stories(stories, token_to_id):
+    """
+    Convert all tokens into their unique ids.
+    """
+    story_ids = []
+    for story, query, answer in stories:
+        story = [[token_to_id[token] for token in sentence] for sentence in story]
+        query = [token_to_id[token] for token in query]
+        answer = token_to_id[answer]
+        story_ids.append((story, query, answer))
+    return story_ids
