@@ -144,7 +144,28 @@ def main():
     if not os.path.exists(FLAGS.dest_dir):
         os.makedirs(FLAGS.dest_dir)
 
-    filenames = []
+    filenames = [
+        'qa1_single-supporting-fact',
+        'qa2_two-supporting-facts',
+        'qa3_three-supporting-facts',
+        'qa4_two-arg-relations',
+        'qa5_three-arg-relations',
+        'qa6_yes-no-questions',
+        'qa7_counting',
+        'qa8_lists-sets',
+        'qa9_simple-negation',
+        'qa10_indefinite-knowledge',
+        'qa11_basic-coreference',
+        'qa12_conjunction',
+        'qa13_compound-coreference',
+        'qa14_time-reasoning',
+        'qa15_basic-deduction',
+        'qa16_basic-induction',
+        'qa17_positional-reasoning',
+        'qa18_size-reasoning',
+        'qa19_path-finding',
+        'qa20_agents-motivations',
+    ]
 
     for filename in tqdm(filenames):
         if FLAGS.include_10k:
