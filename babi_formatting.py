@@ -97,3 +97,22 @@ def tokenize_stories(stories, token_to_id):
         answer = token_to_id[answer]
         story_ids.append((story, query, answer))
     return story_ids
+
+def pad_stories(stories, max_sentence_length, max_story_length, max_query_length):
+
+    for story, query, answer in stories:
+        for sentence in story:
+            for _ in range(max_sentence_length - len(sentence)):
+                sentence.append(PAD_ID)
+            assert len(sentence) == max_sentence_length
+
+        for _ in range(max_story_length - len(story)):
+            story.append([PAD_ID for _ in range(max_sentence_length)])
+
+        for _ in range(max_query_length - len(query)):
+            query.append(PAD_ID)
+
+        assert len(story) == max_story_length
+        assert len(query) == max_query_length
+
+    return stories
