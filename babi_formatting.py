@@ -123,6 +123,9 @@ def int64_features(value):
     return tf.train.Feature(int64_list=tf.train.Int64List(value=value))
 
 def save_dataset(stories, path):
+    """
+    Save the stories into TFRecords.
+    """
     writer = tf.python_io.TFRecordWriter(path)
     for story, query, answer in stories:
         story_flat = [token_id for sentence in story for token_id in sentence]
