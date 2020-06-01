@@ -139,3 +139,82 @@ def save_dataset(stories, path):
         example = tf.train.Example(features=features)
         writer.write(example.SerializeToString())
     writer.close()
+
+def main():
+    if not os.path.exists(FLAGS.dest_dir):
+        os.makedirs(FLAGS.dest_dir)
+
+    filenames = []
+
+    for filename in tqdm(filenames):
+        if FLAGS.include_10k:
+            stories_path_train = os.path.join('tasks_1-20_v1-2/en-10k/', filename + '_train.txt')
+            stories_path_test = os.path.join('tasks_1-20_v1-2/en-10k/', filename + '_test.txt')
+            dataset_path_train = os.path.join(FLAGS.dest_dir, filename + '_10k_train.tfrecords')
+            dataset_path_test = os.path.join(FLAGS.dest_dir, filename + '_10k_test.tfrecords')
+            metadata_path = os.path.join(FLAGS.dest_dir, filename + '_10k.json')
+            dataset_size = 10000
+        else:
+            stories_path_train = os.path.join('tasks_1-20_v1-2/en/', filename + '_train.txt')
+            stories_path_test = os.path.join('tasks_1-20_v1-2/en/', filename + '_test.txt')
+            dataset_path_train = os.path.join(FLAGS.dest_dir, filename + '_1k_train.tfrecords')
+            dataset_path_test = os.path.join(FLAGS.dest_dir, filename + '_1k_test.tfrecords')
+            metadata_path = os.path.join(FLAGS.dest_dir, filename + '_1k.json')
+            dataset_size = 1000
+
+        # From the entity networks paper:
+        # > Copying previous works (Sukhbaatar et al., 2015; Xiong et al., 2016), the capacity of the memory
+        # > was limited to the most recent 70 sentences, except for task 3 which was limited to 130 sentences.
+        if filename == 'qa3_three-supporting-facts':
+            truncated_story_length = 130
+        else:
+            truncated_story_length = 70
+
+        tar = tarfile.open(os.path.join(FLAGS.source_dir, 'babi_tasks_data_1_20_v1.2.tar.gz'))
+
+        f_train = tar.extractfile(stories_path_train)
+        f_test = tar.extractfile(stories_path_test)
+
+        stories_train = parse_stories(f_train.readlines())
+        stories_test = parse_stories(f_test.readlines())
+
+        stories_train = truncate_stories(stories_train, truncated_story_length)
+        stories_test = truncate_stories(stories_test, truncated_story_length)
+
+        token_to_id = get_tokenizer(stories_train + stories_test)
+
+        stories_token_train = tokenize_stories(stories_train, token_to_id)
+        stories_token_test = tokenize_stories(stories_test, token_to_id)
+        stories_token_all = stories_token_train + stories_token_test
+
+        max_sentence_length = max([len(sentence) for story, _, _ in stories_token_all for sentence in story])
+        max_story_length = max([len(story) for story, _, _ in stories_token_all])
+        max_query_length = max([len(query) for _, query, _ in stories_token_all])
+        vocab_size = len(token_to_id)
+
+        with open(metadata_path, 'w') as f:
+            metadata = {
+                'dataset_name': filename,
+                'dataset_size': dataset_size,
+                'max_sentence_length': max_sentence_length,
+                'max_story_length': max_story_length,
+                'max_query_length': max_query_length,
+                'vocab_size': vocab_size,
+                'tokens': token_to_id,
+                'datasets': {
+                    'train': os.path.basename(dataset_path_train),
+                    'test': os.path.basename(dataset_path_test),
+                }
+            }
+            json.dump(metadata, f)
+
+        stories_pad_train = pad_stories(stories_token_train, \
+            max_sentence_length, max_story_length, max_query_length)
+        stories_pad_test = pad_stories(stories_token_test, \
+            max_sentence_length, max_story_length, max_query_length)
+
+        save_dataset(stories_pad_train, dataset_path_train)
+        save_dataset(stories_pad_test, dataset_path_test)
+
+if __name__ == '__main__':
+    main()
