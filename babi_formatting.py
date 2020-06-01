@@ -118,3 +118,7 @@ def pad_stories(stories, max_sentence_length, max_story_length, max_query_length
         assert len(query) == max_query_length
 
     return stories
+
+def int64_features(value):
+    return tf.train.Feature(int64_list=tf.train.Int64List(value=value))
+ 
