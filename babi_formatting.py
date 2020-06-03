@@ -103,6 +103,17 @@ def tokenize_stories(stories, token_to_id):
     return story_ids
 
 
+def get_max_story_char_length(story):
+    char_total_length = []
+    for story, _, _ in story:
+        char_length = []
+        for sentence in story:
+            char_length.append(len(sentence))
+        char_total_length.append(sum(char_length))
+    return max(char_total_length)
+
+
+
 def pad_stories(stories, max_sentence_length, max_story_length, max_query_length):
     """
     Pad sentences, stories, and queries to a consistence length.
