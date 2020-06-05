@@ -96,3 +96,38 @@ def get_output(last_state, vocab_size, activation=tf.nn.relu, initializer=None, 
 
         y = tf.matmul(activation(tf.matmul(last_state, H)), R)
         return y
+
+
+def get_loss(output, labels, mode):
+    if mode == tf.contrib.learn.ModeKeys.INFER:
+        return None
+    return tf.contrib.losses.sparse_softmax_cross_entropy(output, labels)
+
+
+def training_optimizer(loss, params, mode):
+    if mode != tf.contrib.learn.ModeKeys.TRAIN:
+        return None
+
+    clip_gradients = params['clip_gradients']
+    learning_rate_init = params['learning_rate_init']
+    learning_rate_decay_rate = params['learning_rate_decay_rate']
+    learning_rate_decay_steps = params['learning_rate_decay_steps']
+
+    global_step = tf.contrib.framework.get_or_create_global_step()
+
+    learning_rate = tf.train.exponential_decay(
+        learning_rate=learning_rate_init,
+        decay_steps=learning_rate_decay_steps,
+        decay_rate=learning_rate_decay_rate,
+        global_step=global_step,
+        staircase=True)
+
+    tf.contrib.layers.summarize_tensor(learning_rate, tag='learning_rate')
+
+    train_op = tf.contrib.layers.optimize_loss(loss,
+                                               global_step=global_step,
+                                               learning_rate=learning_rate,
+                                               optimizer='Adam',
+                                               clip_gradients=clip_gradients)
+
+    return train_op
