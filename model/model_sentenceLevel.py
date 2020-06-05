@@ -63,3 +63,36 @@ def model_fn(features, targets, mode, params, scope=None):
             tf.add_check_numerics_ops()
 
         return prediction, loss, train_op
+
+def get_input_encoding(embedding, initializer=None, scope=None):
+    """
+    Implementation of the learned multiplicative mask from Section 2.1, Equation 1. This module is also described
+    in [End-To-End Memory Networks](https://arxiv.org/abs/1502.01852) as Position Encoding (PE). The mask allows
+    the ordering of words in a sentence to affect the encoding.
+    """
+    with tf.variable_scope(scope, 'Encoding', initializer=initializer):
+        _, _, max_sentence_length, _ = embedding.get_shape().as_list()
+        positional_mask = tf.get_variable('positional_mask', [max_sentence_length, 1])
+        encoded_input = tf.reduce_sum(embedding * positional_mask, reduction_indices=[2])
+        return encoded_input
+
+
+def get_story_length(sequence, scope=None):
+    """
+    Find the actual length of a story that has been padded with zeros.
+    """
+    with tf.variable_scope(scope, 'StoryLength'):
+        used = tf.sign(tf.reduce_max(tf.abs(sequence), reduction_indices=[-1]))
+        length = tf.cast(tf.reduce_sum(used, reduction_indices=[-1]), tf.int32)
+        return length
+
+
+def get_output(last_state, vocab_size, activation=tf.nn.relu, initializer=None, scope=None):
+    with tf.variable_scope(scope, 'Output', initializer=initializer):
+        _, embedding_size = last_state.get_shape().as_list()
+
+        R = tf.get_variable('R', [embedding_size, vocab_size])
+        H = tf.get_variable('H', [embedding_size, embedding_size])
+
+        y = tf.matmul(activation(tf.matmul(last_state, H)), R)
+        return y
