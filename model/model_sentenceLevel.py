@@ -52,3 +52,14 @@ def model_fn(features, targets, mode, params, scope=None):
         # Training
         loss = get_loss(output, targets, mode)
         train_op = training_optimizer(loss, params, mode)
+        if debug:
+            tf.contrib.layers.summarize_tensor(story_length, 'story_length')
+            tf.contrib.layers.summarize_tensor(encoded_story, 'encoded_story')
+            tf.contrib.layers.summarize_tensor(encoded_query, 'encoded_query')
+            tf.contrib.layers.summarize_tensor(last_state, 'last_state')
+            tf.contrib.layers.summarize_tensor(output, 'output')
+            tf.contrib.layers.summarize_variables()
+
+            tf.add_check_numerics_ops()
+
+        return prediction, loss, train_op
