@@ -21,8 +21,8 @@ def model_fn(features, targets, mode, params, scope=None):
     hidden_units = params['hidden_units']
     debug = params['debug']
 
-    story = features['story']  # [? * 1 * 311]
-    query = features['query']  # [? * 1 * 4]
+    story = features['story']  # [? * 1 * max_story_char_length]
+    query = features['query']  # [? * 1 * max_query_length]
 
     batch_size = tf.shape(story)[0]
     normal_initializer = tf.random_normal_initializer(stddev=0.1)
@@ -33,8 +33,8 @@ def model_fn(features, targets, mode, params, scope=None):
         embedding_mask = tf.constant([0 if i == 0 else 1 for i in range(vocab_size)],
                                      dtype=tf.float32,
                                      shape=[vocab_size, 1])
-        embedding_params_masked = embedding_params * embedding_mask  # [38 * embedding_size]
-        story_embedding = tf.nn.embedding_lookup(embedding_params_masked, story)  # [? * 1 * 311 * embedding_size]
+        embedding_params_masked = embedding_params * embedding_mask  # [vocab_size * embedding_size]
+        story_embedding = tf.nn.embedding_lookup(embedding_params_masked, story)  # [? * 1 * max_story_char_length * embedding_size]
         query_embedding = tf.nn.embedding_lookup(embedding_params_masked, query)
         # Indices of the spaces between words
         indices_word = get_word_indices(story, token_space)
@@ -61,7 +61,7 @@ def model_fn(features, targets, mode, params, scope=None):
 
 
         with tf.variable_scope('cell_1'):
-            outputs_1, _ = tf.nn.dynamic_rnn(cell_1, embedded_input,              # [? * 311 * embedding_size]
+            outputs_1, _ = tf.nn.dynamic_rnn(cell_1, embedded_input,              # [? * max_story_char_length * embedding_size]
                                                      sequence_length=char_length,	                                                     sequence_length=story_length,
                                                      initial_state=initial_state)	                                                     initial_state=initial_state_1)
             #flattened_output_1 = tf.reshape(outputs_1, tf.concat(0, [[-1], tf.shape(outputs_1)[2:]]))
@@ -226,7 +226,7 @@ def get_output(last_state, encoded_query, vocab_size, activation=tf.nn.relu, ini
     with tf.variable_scope(scope, 'Output', initializer=initializer):
         _, embedding_size = last_state.get_shape().as_list()
 
-        # Use the encoded_query to attend over memories (hidden states of dynamic last_state cell blocks)
+        # Use the encoded_query to attend over memories (last_state of last dynamic_rnn)
         attention = tf.reduce_sum(last_state * encoded_query, reduction_indices=[1])
 
         # Subtract max for numerical stability (softmax is shift invariant)
