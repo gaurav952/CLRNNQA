@@ -39,7 +39,8 @@ def main(_):
     eval_input_fn = dataset.get_input_fn('test', num_epochs=1, shuffle=False)
 
     params = {
-        'vocab_size': dataset.vocab_size,
+        'vocab_size_char': dataset.vocab_size_char,
+        'vocab_size_word': dataset.vocab_size_word,
         'max_sentence_length': dataset.max_sentence_length,
         'max_story_length': dataset.max_story_length,
         'max_story_char_length': dataset.max_story_char_length,
@@ -47,8 +48,8 @@ def main(_):
         'embedding_size': FLAGS.embedding_size,
         'batch_size_int': FLAGS.batch_size,
         'hidden_size': FLAGS.hidden_size,
-        'token_space': dataset.tokens[' '],
-        'token_sentence': dataset.tokens['.'],
+        'token_space': dataset.tokens_char[' '],
+        'token_sentence': dataset.tokens_char['.'],
         'learning_rate_init': FLAGS.learning_rate,
         'learning_rate_decay_steps': 10000,
         'learning_rate_decay_rate': 0.5,
