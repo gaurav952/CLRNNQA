@@ -81,6 +81,7 @@ def model_fn(features, targets, mode, params, scope=None):
         # TODO make RNN for Output - "transfer learning from the encoder?"
         output = get_output(outputs_2,
                             vocab_size=vocab_size_word,
+                            batch_size=batch_size_int,
                             initializer=normal_initializer
                             )
         prediction = tf.argmax(output, 2)
@@ -161,7 +162,7 @@ def get_space_indices(story, token_space, scope=None):
         indices = tf.cast(tf.where(where), tf.int32)
         return indices
 
-def get_output(output, vocab_size, activation=tf.nn.relu, initializer=None, scope=None):
+def get_output(output, vocab_size, batch_size, activation=tf.nn.relu, initializer=None, scope=None):
     with tf.variable_scope(scope, 'Output', initializer=initializer):
          _, _, embedding_size = output.get_shape().as_list()
 
@@ -171,8 +172,8 @@ def get_output(output, vocab_size, activation=tf.nn.relu, initializer=None, scop
         #attention = tf.expand_dims(attention, 2)
 
         # Weight time steps by attention vectors
-        R = tf.get_variable('R', [embedding_size, vocab_size])
-        H = tf.get_variable('H', [embedding_size, embedding_size])
+        R = tf.get_variable('R', [batch_size, embedding_size, vocab_size])
+         H = tf.get_variable('H', [batch_size, embedding_size, embedding_size])
         y = tf.matmul(activation(q + tf.matmul(u, H)), R)
         return y
 
