@@ -52,6 +52,9 @@ def parse_stories(lines, only_supporting=False):
         nid, line = line.split(' ', 1)
         nid = int(nid)
         if nid == 1:
+            story_char = []
+            story_word = []
+        if '\t' in line:
             substory_char = [x for x in story_char if x]
             substory_word = [x for x in story_word if x]
             stories.append((substory_char, substory_word))
