@@ -17,7 +17,7 @@ tf.reset_default_graph()
 tf.logging.set_verbosity(tf.logging.INFO)
 
 FLAGS = tf.app.flags.FLAGS
-
+#Hyper-parameters
 tf.app.flags.DEFINE_integer('seed', 67, 'Random seed.')
 tf.app.flags.DEFINE_string('dataset_path', 'datasets/processed/qa1_single-supporting-fact_1k.json', 'Dataset path.')
 tf.app.flags.DEFINE_string('model_dir', 'logs/', 'Model directory.')
@@ -33,11 +33,12 @@ tf.app.flags.DEFINE_boolean('debug', False, 'Debug mode to enable more summaries
 
 
 def main(_):
-
+    ## TensorFlow processing batches
     dataset = Data(FLAGS.dataset_path, FLAGS.batch_size, FLAGS.examples_per_epoch)
     train_input_fn = dataset.get_input_fn('train', num_epochs=FLAGS.num_epochs, shuffle=True)
     eval_input_fn = dataset.get_input_fn('test', num_epochs=1, shuffle=False)
 
+    ## Parameters for the Estimator
     params = {
         'vocab_size_char': dataset.vocab_size_char,
         'vocab_size_word': dataset.vocab_size_word,
@@ -56,11 +57,11 @@ def main(_):
         'clip_gradients': FLAGS.clip_gradients,
         'debug': FLAGS.debug,
     }
-
+    ## Configurations for the Estimator
     config = tf.contrib.learn.RunConfig(
         tf_random_seed=FLAGS.seed,
-        save_summary_steps=100,
-        save_checkpoints_secs=120,
+        save_summary_steps=500,
+        save_checkpoints_secs=300,
         keep_checkpoint_max=5,
         keep_checkpoint_every_n_hours=1,
         log_device_placement=True)
@@ -69,7 +70,7 @@ def main(_):
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
     model_dir = os.path.join(FLAGS.model_dir, dataset_name, str(timestamp))
-
+    ## Building the Estimator
     estimator = tf.contrib.learn.Estimator(
         model_dir=model_dir,
         model_fn=model_fn,
@@ -86,7 +87,7 @@ def main(_):
         early_stopping_metric='loss',
         early_stopping_metric_minimize=True
     )]
-
+    ## Building the Experiment that takes care of the training and evaluation loops
     experiment = tf.contrib.learn.Experiment(
         estimator,
         train_input_fn,
