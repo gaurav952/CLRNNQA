@@ -39,7 +39,7 @@ def tokenize_char(sentence):
     return list(sentence.lower())
 
 
-def parse_stories(lines, only_supporting=False):
+def parse_stories(lines):
     """
     Parse the bAbI task format.
     If only_supporting is True, only the sentences that support the answer are kept.
