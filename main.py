@@ -68,7 +68,7 @@ def main(_):
     dataset_name = os.path.splitext(os.path.basename(FLAGS.dataset))[0]
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
-    model_dir = os.path.join(FLAGS.model_dir, dataset_name, "2017-03-08_16-48-22")
+    model_dir = os.path.join(FLAGS.model_dir, dataset_name, "2020-06-20_02-32-46")
 
     ## Building the Estimator
     estimator = tf.contrib.learn.Estimator(

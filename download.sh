@@ -1,4 +1,3 @@
-
 #!/bin/bash
 
 BABI_TASKS=babi_tasks_data_1_20_v1.2.tar.gz

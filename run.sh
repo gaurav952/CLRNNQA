@@ -35,4 +35,4 @@ seeds=(7 14 21 28 35 42 49 56 63 70)
 #  done
 #done
 
-python main.py --dataset_path="$base_path/qa1_single-supporting-fact_1k.json" --seed=14 
+python main.py --dataset_path="$base_path/qa1_single-supporting-fact_1k.json" --seed=14
