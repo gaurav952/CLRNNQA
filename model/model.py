@@ -25,7 +25,7 @@ def model_fn(features, targets, mode, params, scope=None):
 
     normal_initializer = tf.random_normal_initializer(stddev=0.1)
 
-    with tf.variable_scope(scope, 'Mango', initializer=normal_initializer):
+    with tf.variable_scope(scope, 'CLRNNQA', initializer=normal_initializer):
         ## INPUT embedding
         with tf.variable_scope('Input'):
             embedding_params_story = tf.get_variable('embedding_params_story', [vocab_size_char, embedding_size])
