@@ -2,7 +2,9 @@
 
 ... WORK IN PROGRESS ...
 
-The model will first be challenged with the bAbI dataset from FAIR.
+The models will first be challenged with the bAbI dataset from FAIR.
+Next, there will be experiments on the SQuAD dataset.
+
 
 ### Files :
 
