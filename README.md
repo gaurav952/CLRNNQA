@@ -23,7 +23,7 @@ squad.py | implementation of the QRN model w/ Char2Word module (on SQuAD dataset
 * **run.sh** - runs main.py given a dataset and a seed
 * **char2word.py** - contains the Char2Word block
 
-### Usage (on bAbI dataset):
+### Usage (with bAbI dataset):
 
 Query-Reduction Network without Char2Word:
 ```bash
@@ -35,10 +35,8 @@ Query-Reduction Network with Char2Word:
 python char2word_qrn.py
 ```
 
-EntNet:
----WORK IN PROGRESS---
 
-### Usage (on SQuAD dataset):
+### Usage (with SQuAD dataset):
 
 Query-Reduction Network with Char2Word:
 ```bash
