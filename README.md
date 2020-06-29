@@ -1,8 +1,16 @@
 # Question Answering using character-level RNN over babi (FAIR dataset) and SQUAD (Stanford dataset)
 
-... WORK IN PROGRESS ...
-
 The different models will first be challenged with the bAbI dataset from FAIR and the SQuAD dataset from Stanford.
+
+Name | Description
+--- | ---
+/babi| babi dataset and utilities
+/squad | squad dataset and utilities
+/qrn | contains the QRN cell
+char2word.py | Char2Word-only module (on bAbI dataset)
+qrn.py | implementation of the QRN model (on bAbI dataset)
+char2word_qrn.py | implementation of the QRN model w/ Char2Word module (on bAbI dataset)
+squad.py | implementation of the QRN model w/ Char2Word module (on SQuAD dataset)
 
 
 ### Files :
