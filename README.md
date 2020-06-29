@@ -2,8 +2,7 @@
 
 ... WORK IN PROGRESS ...
 
-The models will first be challenged with the bAbI dataset from FAIR.
-Next, there will be experiments on the SQuAD dataset.
+The different models will first be challenged with the bAbI dataset from FAIR and the SQuAD dataset from Stanford.
 
 
 ### Files :
@@ -16,7 +15,7 @@ Next, there will be experiments on the SQuAD dataset.
 * **run.sh** - runs main.py given a dataset and a seed
 * **char2word.py** - contains the Char2Word block
 
-### Usage :
+### Usage (on bAbI dataset):
 
 Query-Reduction Network without Char2Word:
 ```bash
@@ -28,7 +27,12 @@ Query-Reduction Network with Char2Word:
 python char2word_qrn.py
 ```
 
-Entity Neural Network (first, run format_babi.py to preprocess the data):
+EntNet:
+---WORK IN PROGRESS---
+
+### Usage (on SQuAD dataset):
+
+Query-Reduction Network with Char2Word:
 ```bash
-bash run.sh
+python squad.py
 ```
