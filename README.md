@@ -1,6 +1,5 @@
 # Question Answering using character-level RNN over babi (FAIR dataset) and SQUAD (Stanford dataset)
-
-The different models will first be challenged with the bAbI dataset from FAIR and the SQuAD dataset from Stanford.
+The NLP community has made great progress on open-domain question answering, but the systems still struggle to answer complex questions over a large collection of text. This project is a small effort to present an efficient and explainable method for Question Answering using character-level RNNs over the SQUAD and BABI Dataset.
 
 Name | Description
 --- | ---
